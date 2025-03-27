@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchUsers, deleteUser } from '../services/api';
+import { fetchUsers, deleteUser, updateUser } from '../services/api';
 import UserCard from './UserCard';
 import EditUserModal from './EditUserModal';
+import Toast from './Toast';
 
 const UserList = () => {
     const setUsers = useState([])[1]; // Only get setUsers without users
@@ -15,15 +16,26 @@ const UserList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
 
+  const [toast, setToast] = useState({
+    message: '',
+    type: '',
+    visible: false
+  });
+
+
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const data = await fetchUsers(page);
-        setUsers(data.data);
-        setOriginalUsers(data.data);
-        setTotalPages(data.total_pages);
+        const result = await fetchUsers(page);
+        if (result.success) {
+          setUsers(result.data);
+          setOriginalUsers(result.data);
+          setTotalPages(result.total_pages);
+        } else {
+          showToast(result.message, 'error');
+        }
       } catch (error) {
-        console.error('Failed to fetch users', error);
+        showToast('Failed to fetch users', 'error');
       }
     };
 
@@ -57,31 +69,55 @@ const UserList = () => {
     return result;
   }, [originalUsers, searchTerm, sortBy]);
 
-  const handleDelete = async (userId) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await deleteUser(userId);
+// Toast notification helper
+const showToast = (message, type) => {
+  setToast({
+    message,
+    type,
+    visible: true
+  });
+};
+
+const handleDelete = async (userId) => {
+  if (window.confirm('Are you sure you want to delete this user?')) {
+    try {
+      const result = await deleteUser(userId);
+      if (result.success) {
         const updatedUsers = originalUsers.filter(user => user.id !== userId);
         setUsers(updatedUsers);
         setOriginalUsers(updatedUsers);
-      } catch (error) {
-        console.error('Delete failed', error);
+        showToast(result.message, 'success');
+      } else {
+        showToast(result.message, 'error');
       }
+    } catch (error) {
+      showToast('Delete failed', 'error');
     }
-  };
+  }
+};
 
   const handleEdit = (user) => {
     setSelectedUser(user);
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateUser = (updatedUser) => {
-    const updatedUsers = originalUsers.map(user => 
-      user.id === updatedUser.id ? {...user, ...updatedUser} : user
-    );
-    setUsers(updatedUsers);
-    setOriginalUsers(updatedUsers);
-    setIsEditModalOpen(false);
+  const handleUpdateUser = async (updatedUser) => {
+    try {
+      const result = await updateUser(updatedUser.id, updatedUser);
+      if (result.success) {
+        const updatedUsers = originalUsers.map(user => 
+          user.id === updatedUser.id ? {...user, ...updatedUser} : user
+        );
+        setUsers(updatedUsers);
+        setOriginalUsers(updatedUsers);
+        setIsEditModalOpen(false);
+        showToast(result.message, 'success');
+      } else {
+        showToast(result.message, 'error');
+      }
+    } catch (error) {
+      showToast('Update failed', 'error');
+    }
   };
 
   return (
@@ -96,7 +132,14 @@ const UserList = () => {
             className="search-input"
           />
         </div>
-
+        {/* Toast Notification */}
+      {toast.visible && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type}
+          onClose={() => setToast(prev => ({ ...prev, visible: false }))}
+        />
+      )}
         <div className="filter-container">
           <select 
             value={sortBy} 
