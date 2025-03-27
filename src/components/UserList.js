@@ -28,7 +28,7 @@ const UserList = () => {
     };
 
     loadUsers();
-  }, [page]);
+  }, [page, setUsers]);
 
   // Memoized filtering and sorting
   const filteredAndSortedUsers = useMemo(() => {
