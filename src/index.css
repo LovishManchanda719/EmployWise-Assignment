@@ -265,3 +265,52 @@ input:focus ~ .input-icon {
     display: none;
   }
 }
+
+.user-list-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.search-container {
+  flex-grow: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.filter-container {
+  min-width: 200px;
+}
+
+.sort-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .user-list-controls {
+    flex-direction: column;
+  }
+
+  .filter-container {
+    min-width: 100%;
+  }
+}
