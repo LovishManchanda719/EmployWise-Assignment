@@ -23,7 +23,6 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
         email
       };
       
-      const response = await updateUser(user.id, updatedUserData);
       onUpdate({ ...user, ...updatedUserData });
       onClose();
     } catch (error) {

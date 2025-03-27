@@ -4,7 +4,7 @@ import UserCard from './UserCard';
 import EditUserModal from './EditUserModal';
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
+  const [_, setUsers] = useState([]);
   const [originalUsers, setOriginalUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
