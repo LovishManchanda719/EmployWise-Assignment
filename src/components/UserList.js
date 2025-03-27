@@ -4,7 +4,7 @@ import UserCard from './UserCard';
 import EditUserModal from './EditUserModal';
 
 const UserList = () => {
-  const [_, setUsers] = useState([]);
+    const setUsers = useState([])[1]; // Only get setUsers without users
   const [originalUsers, setOriginalUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -14,7 +14,6 @@ const UserList = () => {
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
-  const [filterGender, setFilterGender] = useState('all');
 
   useEffect(() => {
     const loadUsers = async () => {

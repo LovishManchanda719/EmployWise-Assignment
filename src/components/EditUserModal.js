@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { updateUser } from '../services/api';
 
 const EditUserModal = ({ user, onClose, onUpdate }) => {
   const [firstName, setFirstName] = useState(user.first_name);
